@@ -5,7 +5,7 @@ from typing import Any
 
 def draw_circle(event: int, x: int, y: int, image: cv2.typing.MatLike, flags: int) -> None:
     if event == cv2.EVENT_LBUTTONDOWN:
-        cv2.circle(image, (x, y), 5, (255, 0, 0), -1)
+        cv2.circle(image, (x, y), 3, (255, 0, 0), -1)
 
 def run() -> None:
     files = file_utils.files_not_converted()
