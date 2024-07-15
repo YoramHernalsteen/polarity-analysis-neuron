@@ -1,7 +1,7 @@
 import customtkinter as ctk
-import file_utils
-import pinpoint_centre
-import configuration
+import functionality.helpers.file_utils as file_utils
+import functionality.pinpoint_centre as pinpoint_centre
+import functionality.configuration as configuration
 from typing import Any
 
 ctk.set_appearance_mode("System") 

@@ -1,5 +1,5 @@
 import os
-import constants
+import functionality.constants.constants as constants
 from typing import List
 import configparser
 

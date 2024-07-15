@@ -1,5 +1,5 @@
 import cv2
-import file_utils
+import functionality.helpers.file_utils as file_utils
 import os
 from typing import Any
 
