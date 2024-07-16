@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 from dataclasses import dataclass
+import functionality.helpers.file_utils as file_utils
+from enum import Enum
+import os
 
 @dataclass
 class Pixel:
@@ -11,6 +14,57 @@ class Pixel:
     g: int
     b: int
 
+class Direction(Enum):
+    TOPRIGHT = 'TOPRIGHT'
+    TOPLEFT = 'TOPLEFT'
+    BOTTOMRIGHT = 'BOTTOMRIGHT'
+    BOTTOMLEFT = 'BOTTOMLEFT'
+
+@dataclass
+class PixelXY:
+    """Represents a pixel with x, y values"""
+    x: int
+    y: int
+
+def run():
+    files = file_utils.converted_files()
+    for file in files:
+        print(file)
+        img = cv2.imread(file)
+        centre = centre_of_img(img)
+        black_pixels = list_black_pixels(img)
+        size = len(black_pixels)
+
+        if size == 0:
+            size = 1
+
+        directions = {Direction.TOPRIGHT :0, Direction.TOPLEFT : 0, Direction.BOTTOMRIGHT : 0, Direction.BOTTOMLEFT : 0}
+        for pixel in black_pixels:
+            if(pixel.x >= centre.x and pixel.y >= centre.y):
+                directions[Direction.BOTTOMRIGHT] += 1
+            elif(pixel.x >= centre.x and pixel.y < centre.y):
+                directions[Direction.TOPRIGHT] += 1
+            elif(pixel.x < centre.x and pixel.y < centre.y):
+                directions[Direction.TOPLEFT] += 1
+            elif(pixel.x < centre.x and pixel.y >= centre.y):
+                directions[Direction.BOTTOMLEFT] += 1
+
+        directions_percentage = {Direction.TOPRIGHT : (directions[Direction.TOPRIGHT] / size) * 100
+                                 , Direction.TOPLEFT : (directions[Direction.TOPLEFT] / size) * 100
+                                 , Direction.BOTTOMRIGHT : (directions[Direction.BOTTOMRIGHT] / size) * 100
+                                 , Direction.BOTTOMLEFT : (directions[Direction.BOTTOMLEFT] / size) * 100}
+        
+        filename = os.path.basename(file)
+        analysis_path = file_utils.generate_analysis_file_location_csv(filename)
+
+        with open(analysis_path, 'w') as f:
+            f.write(f"{Direction.TOPRIGHT.value};{Direction.TOPLEFT.value};{Direction.BOTTOMRIGHT.value};{Direction.BOTTOMLEFT.value}\n")
+            f.write(f"{directions_percentage[Direction.TOPRIGHT]};{directions_percentage[Direction.TOPLEFT]};{directions_percentage[Direction.BOTTOMRIGHT]};{directions_percentage[Direction.BOTTOMLEFT]}\n")
+            f.write(f"{directions[Direction.TOPRIGHT]};{directions[Direction.TOPLEFT]};{directions[Direction.BOTTOMRIGHT]};{directions[Direction.BOTTOMLEFT]}\n")
+        
+        max_y, max_x, _ = img.shape
+        draw_red_line(file, centre.x, centre.y, max_x, max_y)
+        
 def get_pixel(img, x, y):
     """Gets a Pixel object for the pixel at (x, y) in the image."""
     if 0 <= x < img.shape[1] and 0 <= y < img.shape[0]:
@@ -18,6 +72,24 @@ def get_pixel(img, x, y):
         return Pixel(x, y, r, g, b)
     else:
         return None 
+
+def centre_of_img(img) -> PixelXY:
+    centre_pixels = list_blue_pixels(img)
+
+    mean_x = 0 
+    mean_y  = 0
+    size = len(centre_pixels)
+
+    for pixel in centre_pixels:
+        mean_x += pixel.x
+        mean_y += pixel.y
+    
+    if size == 0:
+        size = 1
+
+    mean_y/= size
+    mean_x/=size
+    return PixelXY(x=int(mean_x), y=int(mean_y))
 
 
 def list_all_pixels(img):
@@ -49,30 +121,25 @@ def list_black_pixels(img):
 def list_blue_pixels(img):
     return list_colored_pixels(img=img, color='blue', threshold=250)
 
+def draw_red_line(img, x, y, max_x, max_y):
+    print(img)
+    image = cv2.imread(img)  # Replace with your image path
 
-# Example usage
-image_path = "C:\\Users\\yoram\\Documents\\Programmeren\\python\\cell_analyser\\data\\output\\cel2_070923.png"  # Replace with your image path
-output_file = "C:\\Users\\yoram\\Documents\\Programmeren\\python\\cell_analyser\\data\\output\\analyse.csv"  # Replace with your image path
-img = cv2.imread(image_path)
+    if image is None:
+        print("Could not read the image.")
 
-# List all pixels
-#pixels = list_all_pixels(img)
-#print(f"All pixels (first 5): {pixels[:5]}")  # Print a few for demonstration
+    color = (255, 0, 0)  # Red color
+    thickness = 1
 
-# List black pixels
-pixels = list_black_pixels(img)
-print(f"black pixel coordinates {len(pixels)} of {len(list_all_pixels(img))}")  # Print a few
+    start_point = (0, y)
+    end_point = (max_x, y)
+    image = cv2.line(image, start_point, end_point, color, thickness)
 
-# List blue pixels
-pixels = list_blue_pixels(img)
-print(f"Blue pixel coordinates {len(pixels)} of {len(list_all_pixels(img))}")  # Print a few
+    start_point = (x, 0)
+    end_point = (x, max_y)
+    image = cv2.line(image, start_point, end_point, color, thickness)
 
-def write_pixels_to_file(img, filename):
-    """Writes Pixel objects to a file in dataclass format."""
-    pixels = list_all_pixels(img)
-    with open(filename, 'w') as f:
-        f.write(f"x;y;r;g;b\n")
-        for pixel in pixels:
-            f.write(f"{pixel.x};{pixel.y};{pixel.r};{pixel.g};{pixel.b}\n")
-
-write_pixels_to_file(img, output_file)
+    file_name = os.path.basename(img)
+    file_path = file_utils.generate_analysis_file_location(file_name)
+    print(file_path)
+    cv2.imwrite(file_path, image)

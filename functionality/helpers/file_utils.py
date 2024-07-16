@@ -40,6 +40,15 @@ def generate_output_file_location(file: str) -> str:
     """Generates the correct file location in the output folder for a given filename."""
     return os.path.join(output_path(), file)
 
+def generate_analysis_file_location_csv(file: str) -> str:
+    """Generates the correct file location in the analysis folder for a given filename with CSV extension."""
+    filename = os.path.splitext(file)[0]
+    return os.path.join(analysis_path(), filename + '.csv')
+
+def generate_analysis_file_location(file: str) -> str:
+    """Generates the correct file location in the analysis folder for a given filename with CSV extension."""
+    return os.path.join(analysis_path(), file)
+
 def current_path() -> str:
     return os.getcwd()
 
@@ -85,6 +94,23 @@ def files_not_converted() -> List[str]:
     
     return missing_files
 
+def converted_files() -> List[str]:
+    """returns all files in the output folder."""
+    files = []
+
+    output_folder = output_path()
+    
+    for filename in os.listdir(output_folder):
+        if is_image(filename):
+            files.append(os.path.join(output_folder, filename))
+    
+    return files
+
 def files_not_converted_count() -> int:
     """Compares files in input and output folders and returns the number of those in the input but not the output."""
     return len(files_not_converted())
+
+def is_image(file_path):
+    ext = os.path.splitext(file_path)[1]
+    image_extensions = [".jpg", ".jpeg", ".png"]  # Add more as needed
+    return ext.lower() in image_extensions
