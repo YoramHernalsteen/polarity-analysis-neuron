@@ -21,7 +21,7 @@ def update_ui(frame: Any, show_buttons=None):
     if show_buttons:
         if is_configured:
             ctk.CTkButton(frame, text=f"Pinpoint Centre ({file_utils.files_not_converted_count()})", command= lambda: pinpoint_centre_image(frame=frame)).pack(pady=5, padx=10)
-            ctk.CTkButton(frame, text="Analyze", command= lambda: analyse_cell_direction(frame=frame)).pack(pady=5, padx=10)
+            ctk.CTkButton(frame, text="Analyse", command= lambda: analyse_cell_direction(frame=frame)).pack(pady=5, padx=10)
             ctk.CTkButton(frame, text="Configuration", command= lambda: display_configuration(frame=frame)).pack(pady=5, padx=10)
         else:
             ctk.CTkButton(frame, text="Configure", command= lambda: configure_app(frame=frame)).pack(pady=5, padx=10)

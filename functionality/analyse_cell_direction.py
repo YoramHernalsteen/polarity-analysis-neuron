@@ -40,7 +40,6 @@ class PixelXY:
 def run():
     files = file_utils.converted_files()
     for file in files:
-        print(file)
         img = cv2.imread(file)
         centre = centre_of_img(img)
         black_pixels = list_black_pixels(img)
@@ -141,7 +140,6 @@ def list_blue_pixels(img: cv2.typing.MatLike) -> List[Pixel]:
     return list_colored_pixels(img=img, color='blue', threshold=250)
 
 def draw_red_lines(img: cv2.typing.MatLike, centre: PixelXY, max: PixelXY) -> None:
-    print(img)
     image = cv2.imread(img)
 
     if image is None:
@@ -172,7 +170,6 @@ def draw_red_lines(img: cv2.typing.MatLike, centre: PixelXY, max: PixelXY) -> No
 
     file_name = os.path.basename(img)
     file_path = file_utils.generate_analysis_file_location(file_name)
-    print(file_path)
     cv2.imwrite(file_path, image)
 
 def get_part():
@@ -209,7 +206,6 @@ def get_direction(centre: PixelXY, max: PixelXY, pixel: PixelXY) -> Direction:
 
         limit = get_limit(centre, Limit.BOTTOMRIGHT, max)
         coordinate = get_limit(coordinate, Limit.BOTTOMRIGHT, max)
-        print(f'{coordinate} {limit}')
         if coordinate.x < limit.x or coordinate.y > limit.y:
             return Direction.BOTTOMRIGHT2
         return Direction.BOTTOMRIGHT1

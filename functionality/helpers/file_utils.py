@@ -89,7 +89,7 @@ def files_not_converted() -> List[str]:
     for filename in os.listdir(input_folder):
         input_file = os.path.join(input_folder, filename)
         output_file = os.path.join(output_folder, filename)
-        if os.path.isfile(input_file) and not os.path.isfile(output_file):
+        if os.path.isfile(input_file) and is_image(input_file) and not os.path.isfile(output_file):
             missing_files.append(input_file)
     
     return missing_files
