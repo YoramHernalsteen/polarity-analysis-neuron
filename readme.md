@@ -19,7 +19,7 @@ Then fill in the parameter as follows:
 
 ![output file](docs/task.png)
 
-cd folder path of the project
+cd folder path of the project (where you downloaded it to)
 
 ./run.sh
 
