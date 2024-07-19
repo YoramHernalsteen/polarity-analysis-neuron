@@ -33,6 +33,15 @@ The first part is topright 1, the last part is topleft 2.
 
 # How to run the application
 
+Open the terminal in the folder where you installed the application and run 'chmod +x run.sh'
+
+![output file](docs/open_in_terminal.png)
+
+Then you have two options:
+
+1. Run via ./run.sh in terminal
+2. Create a task (more info below)
+
 You can use Tasks (opdrachten) to automate the installation of dependencies and requirements needed for the application. You will need to have a working python 3 installation (preferably python 3.9 or higher.)
 
 First select shell script.
