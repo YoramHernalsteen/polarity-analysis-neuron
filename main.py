@@ -3,6 +3,7 @@ import functionality.helpers.file_utils as file_utils
 import functionality.pinpoint_centre as pinpoint_centre
 import functionality.analyse_cell_direction as direction_analysis
 import functionality.configuration as configuration
+import functionality.auto_pinpoint_centre as auto_pinpoint_centre
 from typing import Any
 
 ctk.set_appearance_mode("System") 
@@ -23,6 +24,7 @@ def update_ui(frame: Any, show_buttons=None):
             ctk.CTkButton(frame, text=f"Pinpoint Centre ({file_utils.files_not_converted_count()})", command= lambda: pinpoint_centre_image(frame=frame)).pack(pady=5, padx=10)
             ctk.CTkButton(frame, text="Analyse", command= lambda: analyse_cell_direction(frame=frame)).pack(pady=5, padx=10)
             ctk.CTkButton(frame, text="Configuration", command= lambda: display_configuration(frame=frame)).pack(pady=5, padx=10)
+            ctk.CTkButton(frame, text="BETA - Auto analysis", command= lambda: auto_analysis(frame=frame)).pack(pady=5, padx=10)
         else:
             ctk.CTkButton(frame, text="Configure", command= lambda: configure_app(frame=frame)).pack(pady=5, padx=10)
 
@@ -36,6 +38,12 @@ def has_configuration():
 def pinpoint_centre_image(frame: Any):
     update_ui(frame=frame, show_buttons=False)
     pinpoint_centre.run()
+    update_ui(frame=frame)
+
+def auto_analysis(frame: Any):
+    update_ui(frame=frame, show_buttons=False)
+    auto_pinpoint_centre.run()
+    direction_analysis.run()
     update_ui(frame=frame)
 
 def analyse_cell_direction(frame: Any):

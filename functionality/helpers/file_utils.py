@@ -118,3 +118,18 @@ def is_image(file_path):
 def convert_filename_to_png(filename):
     root, _ = os.path.splitext(filename)
     return root + '.png'
+
+def input_files() -> List[str]:
+    """returns all files in the input folder."""
+    files = []
+
+    input_folder = input_path()
+    
+    for filename in os.listdir(input_folder):
+        if is_image(filename):
+            files.append(os.path.join(input_folder, filename))
+    
+    return files
+
+def base_filename(filepath):
+    return os.path.basename(filepath)
