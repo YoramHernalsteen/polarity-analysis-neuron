@@ -1,3 +1,28 @@
+# How to run the application
+
+Open the terminal in the folder where you downloaded the application and run 'chmod +x run.sh'. This will make sure you can run the script.
+
+![output file](docs/open_in_terminal.png)
+
+Then you have two options:
+
+1. Run via ./run.sh in terminal
+2. Create a task (more info below)
+
+You can use Tasks (opdrachten) to automate the installation of dependencies and requirements needed for the application. You will need to have a working python 3 installation (preferably python 3.9 or higher.)
+
+First select shell script.
+
+![output file](docs/run_shell.png)
+
+Then fill in the parameter as follows:
+
+![output file](docs/task.png)
+
+cd folder path of the project
+
+./run.sh
+
 # How to use cell analysis app.
 
 ![Application](docs/app.png)
@@ -30,28 +55,3 @@ The first part is topright 1, the last part is topleft 2.
 ![analysis file](docs/csv.png)
 
 ![analysis file](docs/analysis.png)
-
-# How to run the application
-
-Open the terminal in the folder where you installed the application and run 'chmod +x run.sh'
-
-![output file](docs/open_in_terminal.png)
-
-Then you have two options:
-
-1. Run via ./run.sh in terminal
-2. Create a task (more info below)
-
-You can use Tasks (opdrachten) to automate the installation of dependencies and requirements needed for the application. You will need to have a working python 3 installation (preferably python 3.9 or higher.)
-
-First select shell script.
-
-![output file](docs/run_shell.png)
-
-Then fill in the parameter as follows:
-
-![output file](docs/task.png)
-
-cd folder path of the project
-
-./run.sh
