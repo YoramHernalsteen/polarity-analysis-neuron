@@ -191,13 +191,11 @@ def get_limit(centre: PixelXY, limit: Limit, max: PixelXY) -> PixelXY:
     return PixelXY(0,0)
 
 def search_limit(coordinate: PixelXY, max: PixelXY, x_move: int, y_move: int) -> PixelXY:
-    if(coordinate.x == 0 or coordinate.x == max.x or coordinate.y == 0 or coordinate.y == max.y):
-        return PixelXY(coordinate.x, coordinate.y)
+    while not(coordinate.x == 0 or coordinate.x == max.x or coordinate.y == 0 or coordinate.y == max.y):
+        coordinate.x += x_move
+        coordinate.y += y_move
     
-    coordinate.x += x_move
-    coordinate.y += y_move
-
-    return search_limit(coordinate, max, x_move, y_move)
+    return PixelXY(coordinate.x, coordinate.y)
 
 def get_direction(centre: PixelXY, max: PixelXY, pixel: PixelXY) -> Direction:
 
