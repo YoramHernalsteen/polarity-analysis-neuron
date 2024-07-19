@@ -62,7 +62,7 @@ def run():
         for pixel in black_pixels:
             directions[get_direction(centre, PixelXY(max_x, max_y), pixel)] += 1
 
-        directions_percentage = {Direction.TOPRIGHT1 : round(((directions[Direction.TOPRIGHT1] / size) * 100), 4)
+        directions_percentage_raw = {Direction.TOPRIGHT1 : round(((directions[Direction.TOPRIGHT1] / size) * 100), 4)
                                  , Direction.TOPRIGHT2 : round(((directions[Direction.TOPRIGHT2] / size) * 100), 4)
                                  , Direction.BOTTOMRIGHT1 : round(((directions[Direction.BOTTOMRIGHT1] / size) * 100), 4)
                                  , Direction.BOTTOMRIGHT2 : round(((directions[Direction.BOTTOMRIGHT2] / size) * 100), 4)
@@ -71,6 +71,7 @@ def run():
                                  , Direction.BOTTOMLEFT1 : round(((directions[Direction.BOTTOMLEFT1] / size) * 100), 4)
                                  , Direction.BOTTOMLEFT2 : round(((directions[Direction.BOTTOMLEFT2] / size) * 100), 4)}
         
+        directions_percentage = format_dict_with_commas(directions_percentage_raw)
         filename = os.path.basename(file)
         analysis_path = file_utils.generate_analysis_file_location_csv(filename)
 
@@ -93,7 +94,7 @@ def get_pixel(img: cv2.typing.MatLike, x: int, y: int) -> Pixel:
 
 def centre_of_img(img: cv2.typing.MatLike) -> PixelXY:
     centre_pixels = list_blue_pixels(img)
-
+    
     mean_x = 0 
     mean_y  = 0
     size = len(centre_pixels)
@@ -235,3 +236,21 @@ def get_direction(centre: PixelXY, max: PixelXY, pixel: PixelXY) -> Direction:
         return Direction.BOTTOMLEFT1
     
     return None
+
+def format_dict_with_commas(data_dict: dict) -> dict:
+    """Converts numeric values in a dictionary to comma-separated decimal strings.
+
+    Args:
+        data_dict: The input dictionary with numeric values.
+
+    Returns:
+        A new dictionary with the values formatted as comma-separated decimal strings.
+    """
+    formatted_dict = {}
+    for key, value in data_dict.items():
+        if isinstance(value, (int, float)):
+            number = f"{value:4f}"
+            formatted_dict[key] = number.replace('.', ',')
+        else:
+            formatted_dict[key] = value 
+    return formatted_dict

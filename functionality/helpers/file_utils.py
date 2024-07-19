@@ -38,7 +38,7 @@ def verify_output_folder() -> None:
 
 def generate_output_file_location(file: str) -> str:
     """Generates the correct file location in the output folder for a given filename."""
-    return os.path.join(output_path(), file)
+    return os.path.join(output_path(), convert_filename_to_png(file))
 
 def generate_analysis_file_location_csv(file: str) -> str:
     """Generates the correct file location in the analysis folder for a given filename with CSV extension."""
@@ -88,7 +88,7 @@ def files_not_converted() -> List[str]:
     
     for filename in os.listdir(input_folder):
         input_file = os.path.join(input_folder, filename)
-        output_file = os.path.join(output_folder, filename)
+        output_file = os.path.join(output_folder, convert_filename_to_png(filename))
         if os.path.isfile(input_file) and is_image(input_file) and not os.path.isfile(output_file):
             missing_files.append(input_file)
     
@@ -114,3 +114,7 @@ def is_image(file_path):
     ext = os.path.splitext(file_path)[1]
     image_extensions = [".jpg", ".jpeg", ".png"]  # Add more as needed
     return ext.lower() in image_extensions
+
+def convert_filename_to_png(filename):
+    root, _ = os.path.splitext(filename)
+    return root + '.png'
