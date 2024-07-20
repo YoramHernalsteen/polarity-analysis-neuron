@@ -103,7 +103,7 @@ def main():
     root.geometry("720x480")
 
     # Title
-    ctk.CTkLabel(root, text="Welcome to the Cell Analysis App").pack(pady=10)
+    ctk.CTkLabel(root, text="Welcome to the polarity analysis App").pack(pady=10)
 
     frame = ctk.CTkFrame(root)
     frame.pack()
