@@ -5,28 +5,28 @@ import functionality.analyse_cell_direction as direction_analysis
 import functionality.configuration as configuration
 import functionality.auto_pinpoint_centre as auto_pinpoint_centre
 from typing import Any
+import functionality.constants.constants as constants
+import time
 
 ctk.set_appearance_mode("System") 
 ctk.set_default_color_theme("green")
 
-def update_ui(frame: Any, show_buttons=None):
-    if show_buttons is None:
-        show_buttons = True
+def update_ui(frame: Any, show_buttons=True):
 
     is_configured = has_configuration()
 
     # clean ui
     for widget in frame.winfo_children():
         widget.destroy()
-
+    
     if show_buttons:
         if is_configured:
             ctk.CTkButton(frame, text=f"Pinpoint Centre ({file_utils.files_not_converted_count()})", command= lambda: pinpoint_centre_image(frame=frame)).pack(pady=5, padx=10)
             ctk.CTkButton(frame, text="Analyse", command= lambda: analyse_cell_direction(frame=frame)).pack(pady=5, padx=10)
-            ctk.CTkButton(frame, text="Configuration", command= lambda: display_configuration(frame=frame)).pack(pady=5, padx=10)
+            ctk.CTkButton(frame, text="Configuration", command= lambda: configure_app(frame=frame, show_configuration=True)).pack(pady=5, padx=10)
             ctk.CTkButton(frame, text="BETA - Auto analysis", command= lambda: auto_analysis(frame=frame)).pack(pady=5, padx=10)
         else:
-            ctk.CTkButton(frame, text="Configure", command= lambda: configure_app(frame=frame)).pack(pady=5, padx=10)
+            ctk.CTkButton(frame, text="Configure", command= lambda: configure_app(frame=frame, show_configuration=True)).pack(pady=5, padx=10)
 
 
 # --- Helper Functions ---
@@ -47,55 +47,64 @@ def auto_analysis(frame: Any):
     update_ui(frame=frame)
 
 def analyse_cell_direction(frame: Any):
+    start_time = time.time()
     update_ui(frame=frame, show_buttons=False)
     direction_analysis.run()
     update_ui(frame=frame)
+    end_time = time.time()
+    duration = round(end_time - start_time)
+    show_popup('Analysis done!', f'Analysis took {duration} seconds.')
 
-def analyze():
-    """Your data analysis logic."""
-    pass
+def entry_new_value(entry: ctk.CTkEntry, value: str):
+    entry.delete(0, 'end') 
+    entry.insert(0, value)
 
-def configure_app(frame: Any):
+def show_popup(title, text):
+    dialog = ctk.CTkInputDialog(
+        text=text, 
+        title=title
+    )
+    dialog.get_input()  # Wait for the user to dismiss the dialog
+
+def configure_app(frame: Any, show_configuration: bool = False):
     """Creates ini file for the configuration of the application"""
     update_ui(frame=frame, show_buttons=False)
 
-    ctk.CTkLabel(frame, text="Input Folder:").pack(pady=5, padx=10)
-    input_folder_entry = ctk.CTkEntry(frame)
+    ctk.CTkLabel(frame, text="Input Folder", width=360).pack(pady=5, padx=10)
+    input_folder_entry = ctk.CTkEntry(frame, width=360)
     input_folder_entry.pack(pady=5, padx=10)
+    if(show_configuration):
+        entry_new_value(input_folder_entry, configuration.get_input_path())
 
-    ctk.CTkLabel(frame, text="Output Folder:").pack(pady=5, padx=10)
-    output_folder_entry = ctk.CTkEntry(frame)
+    ctk.CTkLabel(frame, text="Output Folder", width=360).pack(pady=5, padx=10)
+    output_folder_entry = ctk.CTkEntry(frame, width=360)
     output_folder_entry.pack(pady=5, padx=10)
+    if(show_configuration):
+        entry_new_value(output_folder_entry, configuration.get_output_path())
 
-    ctk.CTkLabel(frame, text="Analysis Folder:").pack(pady=5, padx=10)
-    analysis_folder_entry = ctk.CTkEntry(frame)
+    ctk.CTkLabel(frame, text="Analysis Folder", width=360).pack(pady=5, padx=10)
+    analysis_folder_entry = ctk.CTkEntry(frame, width=360)
     analysis_folder_entry.pack(pady=5, padx=10)
+    if(show_configuration):
+        entry_new_value(analysis_folder_entry, configuration.get_analysis_path())
+
+    ctk.CTkLabel(frame, text="Separator", width=360).pack(pady=5, padx=10)
+    separator_value = ctk.CTkComboBox(frame, width=360, values=[constants.separator_comma, constants.separator_point])
+    separator_value.pack(pady=5, padx=10)
+    if(show_configuration):
+        separator_value.set(configuration.get_separator())
 
     ctk.CTkButton(frame, text="Cancel", command=lambda: update_ui(frame=frame)).pack(pady=5)
-    ctk.CTkButton(frame, text="Save", command=lambda: save_configuration(frame, input_folder_entry, output_folder_entry, analysis_folder_entry)).pack(pady=10)
+    ctk.CTkButton(frame, text="Save", command=lambda: save_configuration(frame, input_folder_entry, output_folder_entry, analysis_folder_entry, separator_value)).pack(pady=10)
 
-def save_configuration(frame: Any, input_folder_entry, output_folder_entry, analysis_folder_entry):
+def save_configuration(frame: Any, input_folder_entry, output_folder_entry, analysis_folder_entry, separator_entry):
     input_folder = input_folder_entry.get()
     output_folder = output_folder_entry.get()
     analysis_folder = analysis_folder_entry.get()
-    configuration.save_to_configuration(input_folder, output_folder, analysis_folder)
+    separator = separator_entry.get()
+    configuration.save_to_configuration(input_folder, output_folder, analysis_folder, separator)
 
     update_ui(frame=frame, show_buttons=True)
-
-def display_configuration(frame: Any):
-    update_ui(frame=frame, show_buttons=False)
-
-    input_label = ctk.CTkLabel(master=frame, text=f"INPUT: {configuration.get_input_path()}")
-    input_label.pack()
-
-    output_label = ctk.CTkLabel(master=frame, text=f"OUTPUT: {configuration.get_output_path()}")
-    output_label.pack()
-
-    analysis_label = ctk.CTkLabel(master=frame, text=f"ANALYSIS: {configuration.get_analysis_path()}")
-    analysis_label.pack()
-
-    ctk.CTkButton(frame, text="Menu", command= lambda: update_ui(frame=frame)).pack(pady=5)
-
 
 def main():
     root = ctk.CTk()

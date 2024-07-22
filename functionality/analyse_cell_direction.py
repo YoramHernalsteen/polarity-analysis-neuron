@@ -4,6 +4,7 @@ import functionality.helpers.file_utils as file_utils
 import functionality.helpers.image_analysis as image_analysis
 import os
 from typing import List
+import functionality.constants.constants as constants
 
 def run():
     files = file_utils.converted_files()
@@ -40,7 +41,9 @@ def run():
                                  , image_analysis.Direction.BOTTOMLEFT1 : round(((directions[image_analysis.Direction.BOTTOMLEFT1] / size) * 100), 4)
                                  , image_analysis.Direction.BOTTOMLEFT2 : round(((directions[image_analysis.Direction.BOTTOMLEFT2] / size) * 100), 4)}
         
-        directions_percentage = format_dict_with_commas(directions_percentage_raw)
+        directions_percentage = directions_percentage_raw
+        if(file_utils.separator() == constants.separator_comma):
+            directions_percentage = format_dict_with_commas(directions_percentage_raw)
         filename = os.path.basename(file)
         analysis_path = file_utils.generate_analysis_file_location_csv(filename)
 

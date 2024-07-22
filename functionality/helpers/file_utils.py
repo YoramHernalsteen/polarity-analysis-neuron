@@ -22,14 +22,34 @@ def ini_file_valid_dir_value(section: str, option: str) -> bool:
     
     return os.path.exists(os.path.normpath(config.get(section=section, option=option)))
 
+def ini_file_valid_separator():
+    config = configparser.ConfigParser()
+    config.read(os.path.join(current_path(),constants.ini_file))
+    separator_value = config.get(section='IO', option='separator')
+    
+    if separator_value == None:
+        return False
+    return separator_value in (constants.separator_comma, constants.separator_point)
+
 def output_path() -> str:
+    if not ini_file_has_output():
+        return ''
     return get_dir_from_ini('IO', 'output')
 
 def input_path() -> str:
+    if not ini_file_has_input():
+        return ''
     return get_dir_from_ini('IO', 'input')
 
 def analysis_path() -> str:
+    if not ini_file_has_analysis():
+        return ''
     return get_dir_from_ini('IO', 'analysis')
+
+def separator() -> str:
+    if not ini_file_has_separator():
+        return constants.separator_point
+    return get_ini_value('IO', 'separator')
 
 def verify_output_folder() -> None:
     """Verifies output folder is present and creates it if necessary."""
@@ -70,12 +90,17 @@ def ini_file_has_analysis() -> bool:
     config.read(os.path.join(current_path(),constants.ini_file))
     return config.has_option("IO", "analysis") and ini_file_valid_dir_value("IO", "analysis")
 
-def has_valid_ini_file():
-    return check_for_ini_file() and ini_file_has_output() and ini_file_has_input() and ini_file_has_analysis()
-
-def create_ini_file(input_folder: str, output_folder:str, analysis_folder:str) -> None:
+def ini_file_has_separator() -> bool:
     config = configparser.ConfigParser()
-    config['IO'] = {'input': input_folder, 'output': output_folder, 'analysis' : analysis_folder}
+    config.read(os.path.join(current_path(),constants.ini_file))
+    return config.has_option('IO', 'separator') and ini_file_valid_separator()
+
+def has_valid_ini_file():
+    return check_for_ini_file() and ini_file_has_output() and ini_file_has_input() and ini_file_has_analysis() and ini_file_has_separator()
+
+def create_ini_file(input_folder: str, output_folder:str, analysis_folder:str, separator: str) -> None:
+    config = configparser.ConfigParser()
+    config['IO'] = {'input': input_folder, 'output': output_folder, 'analysis' : analysis_folder, 'separator': separator}
     with open(os.path.join(current_path(),constants.ini_file), 'w') as configfile:
         config.write(configfile)
         
