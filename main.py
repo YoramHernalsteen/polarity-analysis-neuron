@@ -22,7 +22,8 @@ def update_ui(frame: Any, show_buttons=True):
     if show_buttons:
         if is_configured:
             ctk.CTkButton(frame, text=f"Pinpoint Centre ({file_utils.files_not_converted_count()})", command= lambda: pinpoint_centre_image(frame=frame)).pack(pady=5, padx=10)
-            ctk.CTkButton(frame, text="Analyse", command= lambda: analyse_cell_direction(frame=frame)).pack(pady=5, padx=10)
+            ctk.CTkButton(frame, text=f"Analyse ({file_utils.files_not_analysed_count()})", command= lambda: analyse_cell_direction(frame=frame)).pack(pady=5, padx=10)
+            ctk.CTkButton(frame, text="Analyse All", command= lambda: analyse_cell_direction(frame=frame, analyse_all=True)).pack(pady=5, padx=10)
             ctk.CTkButton(frame, text="Configuration", command= lambda: configure_app(frame=frame, show_configuration=True)).pack(pady=5, padx=10)
             ctk.CTkButton(frame, text="BETA - Auto analysis", command= lambda: auto_analysis(frame=frame)).pack(pady=5, padx=10)
         else:
@@ -46,10 +47,10 @@ def auto_analysis(frame: Any):
     direction_analysis.run()
     update_ui(frame=frame)
 
-def analyse_cell_direction(frame: Any):
+def analyse_cell_direction(frame: Any, analyse_all: bool = False):
     start_time = time.time()
     update_ui(frame=frame, show_buttons=False)
-    direction_analysis.run()
+    direction_analysis.run(analyse_all=analyse_all)
     update_ui(frame=frame)
     end_time = time.time()
     duration = round(end_time - start_time)

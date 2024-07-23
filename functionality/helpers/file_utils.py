@@ -119,6 +119,21 @@ def files_not_converted() -> List[str]:
     
     return missing_files
 
+def files_not_analysed() -> List[str]:
+    """Compares files in output and analysis folders and returns those in the output but not the analysis."""
+    missing_files = []
+    
+    output_folder = output_path()
+    analysis_folder = analysis_path()
+    
+    for filename in os.listdir(output_folder):
+        output_file = os.path.join(output_folder, filename)
+        analysis_file = os.path.join(analysis_folder, filename)
+        if os.path.isfile(output_file) and is_image(output_file) and not os.path.isfile(analysis_file):
+            missing_files.append(output_file)
+    
+    return missing_files
+
 def converted_files() -> List[str]:
     """returns all files in the output folder."""
     files = []
@@ -134,6 +149,10 @@ def converted_files() -> List[str]:
 def files_not_converted_count() -> int:
     """Compares files in input and output folders and returns the number of those in the input but not the output."""
     return len(files_not_converted())
+
+def files_not_analysed_count() -> int:
+    """Compares files in output and analysis folders and returns the number of those in the output but not the analysis."""
+    return len(files_not_analysed())
 
 def is_image(file_path):
     ext = os.path.splitext(file_path)[1]

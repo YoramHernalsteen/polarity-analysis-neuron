@@ -6,12 +6,16 @@ import os
 from typing import List
 import functionality.constants.constants as constants
 
-def run():
-    files = file_utils.converted_files()
+def run(analyse_all: bool = False):
+    files = []
+    if (analyse_all):
+        files = file_utils.converted_files()
+    else:
+        files = file_utils.files_not_analysed()
+
     for file in files:
         img = cv2.imread(file)
         centre = image_analysis.centre_of_img(img)
-        print(f'{file} - {centre}')
         black_pixels = image_analysis.list_black_pixels(img)
         size = len(black_pixels)
 
